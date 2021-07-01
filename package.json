@@ -1,0 +1,20 @@
+{
+  "name": "react-node-template",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "concurrently \"cd src/server && npm install && nodemon \" \"cd src/client && npm install && npm start\"",
+    "dev": "concurrently \"cd src/server && nodemon\" \"cd src/client && npm start\"",
+    "logs": "heroku logs -t",
+    "heroku-postbuild": "cd src/client && npm install && npm run build"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.0.1",
+    "concurrently": "^6.2.0"
+  },
+  "engines": {
+    "node": ">=12.16.1",
+    "npm": ">=6.13.4"
+  },
+  "devDependencies": {}
+}
