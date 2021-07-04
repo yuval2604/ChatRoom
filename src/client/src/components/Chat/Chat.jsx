@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
     width: "35%",
   },
 }));
+let socket;
 
 export const Chat = ({ location }) => {
   const classes = useStyles();
@@ -38,46 +39,61 @@ export const Chat = ({ location }) => {
   const [messages, setMessages] = useState([]);
   const socketInterval = useState(null);
 
-  const [response, setResponse] = useState("");
   const ENDPOINT = "http://127.0.0.1:4001";
-  useEffect(() => {
-    // const socket = io({
-    //   path: ENDPOINT,
-    //   serveClient: false
-    // })
-    let socket = io(ENDPOINT, {
+  // useEffect(() => {
+  //   socket = io(ENDPOINT, {
 
+  //     withCredentials: false
+  //   });
+  //   socket.on("join", (m) => {
+  //     console.log("hello somebiody " + m);
+  //   })
+  //   socket.emit("chat message", () => {
+  //     console.log("join")
+  //   });
+
+  // }, []);
+
+  useEffect(() => {
+    socket = io(ENDPOINT, {
       withCredentials: false
     });
-    socket.on("join", (m) => {
-      console.log("hello somebiody " + m);
-    })
-    socket.emit("chat message", () => {
-      console.log("join")
-    });
+    const { name, room } = queryString.parse(location.search);
 
-  }, []);
+    console.log(socket);
+
+    setRoom(room);
+    setName(name);
+
+    socket.emit("join", { name, room }, (error) => {
+      console.log("join", socket);
+
+      if (error) {
+        alert(error);
+      }
+    });
+  }, [ENDPOINT, location.search]);
 
   //this useEffect is for handeling messages and only runs when messages array changes
-  // useEffect(() => {
-  //   console.log("2");
-  //   socket.on("message", (message) => {
-  //     setMessages((messages) => [...messages, message]); //add new messages to our messages array the ... copies the old messages and all we do is append the new
-  //   });
+  useEffect(() => {
 
-  //   socket.on("roomData", ({ users }) => {
-  //     setUsers(users);
-  //   });
-  // }, []);
+    socket.on("message", (message) => {
+      setMessages((messages) => [...messages, message]); //add new messages to our messages array the ... copies the old messages and all we do is append the new
+    });
+
+    socket.on("roomData", ({ users }) => {
+      setUsers(users);
+    });
+  }, []);
 
   //functioning for sending messages (its a functional component hence why its a function)
   const sendMessage = (event) => {
     console.log("pressed");
     event.preventDefault(); // full browser refreshes aren't good
 
-    // if (message) {
-    //   socket.emit("sendMessage", message, () => setMessage("")); //on the callback from index.js our input field clears
-    // }
+    if (message) {
+      socket.emit("sendMessage", message, () => setMessage("")); //on the callback from index.js our input field clears
+    }
   };
 
   return (

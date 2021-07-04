@@ -13,6 +13,9 @@ import LinkedInIcon from "@material-ui/icons/LinkedIn";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import axios from "axios"
+import { useHistory } from "react-router-dom";
+
 
 const useStyles = makeStyles((theme) => ({
   icons: {
@@ -39,13 +42,36 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export const LoginPage = ({ title, register }) => {
+  let history = useHistory();
   const classes = useStyles();
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    var postData = {
+      name: name,
+      password: password
+    };
+
+    let axiosConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      }
+    };
     // register / login
-    
+    console.log("handle submit request name and password are :", name, password)
+    axios.post("http://localhost:4001/users/register", postData, axiosConfig)
+      .then((res) => {
+        console.log("RESPONSE RECEIVED: ", res.data.name);
+        history.push(`/chat?name=${res.data.name}`)
+      })
+      .catch((err) => {
+        console.log("AXIOS ERROR: ", err);
+      });
+
   };
 
   return (
@@ -73,13 +99,13 @@ export const LoginPage = ({ title, register }) => {
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            value={email}
-            name="email"
-            autoComplete="email"
+            id="name"
+            label="name Address"
+            value={name}
+            name="name"
+            autoComplete="name"
             autoFocus
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={(event) => setName(event.target.value)}
           />
           <TextField
             variant="outlined"
