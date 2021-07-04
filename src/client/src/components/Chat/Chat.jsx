@@ -59,15 +59,10 @@ export const Chat = ({ location }) => {
       withCredentials: false
     });
     const { name, room } = queryString.parse(location.search);
-
-    console.log(socket);
-
-    setRoom(room);
     setName(name);
+    setRoom(room);
 
     socket.emit("join", { name, room }, (error) => {
-      console.log("join", socket);
-
       if (error) {
         alert(error);
       }
@@ -78,10 +73,12 @@ export const Chat = ({ location }) => {
   useEffect(() => {
 
     socket.on("message", (message) => {
+      console.log("message", message, messages)
       setMessages((messages) => [...messages, message]); //add new messages to our messages array the ... copies the old messages and all we do is append the new
     });
 
     socket.on("roomData", ({ users }) => {
+      console.log("room data", users)
       setUsers(users);
     });
   }, []);

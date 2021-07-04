@@ -45,6 +45,7 @@ export const LoginPage = ({ title, register }) => {
   let history = useHistory();
   const classes = useStyles();
   const [name, setName] = useState("");
+  const [room, setRoom] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e) => {
@@ -66,7 +67,7 @@ export const LoginPage = ({ title, register }) => {
     axios.post("http://localhost:4001/users/register", postData, axiosConfig)
       .then((res) => {
         console.log("RESPONSE RECEIVED: ", res.data.name);
-        history.push(`/chat?name=${res.data.name}`)
+        history.push(`/chat?name=${name}&room=${room}`)
       })
       .catch((err) => {
         console.log("AXIOS ERROR: ", err);
@@ -119,6 +120,20 @@ export const LoginPage = ({ title, register }) => {
             id="password"
             autoComplete="current-password"
             onChange={(event) => setPassword(event.target.value)}
+          />
+
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="room"
+            value={room}
+            label="room"
+            type="name"
+            id="roomroom"
+            autoComplete="current-password"
+            onChange={(event) => setRoom(event.target.value)}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
